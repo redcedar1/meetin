@@ -1,0 +1,74 @@
+.App {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: center; /* 수평 정렬 */
+  align-items: center; /* 수직 정렬 */
+  position: fixed; /* 상단에 고정 */
+  top: 0; /* 상단 가장자리와의 거리 */
+  left: 0; /* 왼쪽 가장자리와의 거리 */
+  width: 100%; /* 너비 100% */
+  height: 15vh; /* 높이 화면의 높이의 15% */
+  background-color: rgb(80, 80, 80); /* 배경색 파랑 */
+  z-index: 1000; /* 다른 요소들 위에 보이도록 z-index 설정 */
+}
+
+.mid {
+  position: relative;
+  display: flex;
+  justify-content: center; /* 수평 정렬 */
+  align-items: center; /* 수직 정렬 */
+  flex: 1; /* Header와 Footer 이외의 공간을 차지 */
+  background-color: #3ed732; /* 배경색 파랑 */
+}
+
+.footer {
+  display: flex;
+  justify-content: center; /* 수평 정렬 */
+  align-items: center; /* 수직 정렬 */
+  position: fixed; /* 상단에 고정 */
+  bottom: 0; /* 상단 가장자리와의 거리 */
+  left: 0; /* 왼쪽 가장자리와의 거리 */
+  width: 100%; /* 너비 100% */
+  height: 15vh; /* 높이 화면의 높이의 15% */
+  background-color: rgb(80, 80, 80); /* 배경색 파랑 */
+  z-index: 1000; /* 다른 요소들 위에 보이도록 z-index 설정 */
+}
+
+.black-circle {
+  display: flex;
+  align-items: center; /* 수직 정렬 */
+  justify-content: center; /* 수평 정렬 */
+  position: absolute; /* 상위 요소에 대해 절대적인 위치 설정 */
+  top: 50%; /* 상위 요소의 중앙에 위치 */
+  left: 50%; /* 상위 요소의 중앙에 위치 */
+  transform: translate(-50%, -50%); /* 요소의 중앙을 화면의 중앙으로 이동 */
+  background-color: rgb(255, 120, 120);
+  border-radius: 50%; /* 원 모양으로 만들기 */
+}
+
+.botton-box {
+  display: flex;
+  align-items: center; /* 수직 정렬 */
+  justify-content: space-around; /* 수평 정렬 */
+  position: absolute;
+  top: 50%; /* 상위 요소의 중앙에 위치 */
+  left: 50%; /* 상위 요소의 중앙에 위치 */
+  transform: translate(-50%, -50%); /* 요소의 중앙을 화면의 중앙으로 이동 */
+  background-color: rgb(69, 69, 69);
+}
+.botton {
+  background-color: rgb(206, 2, 2);
+  border-radius: 50%; /* 원 모양으로 만들기 */
+
+  display: flex;
+  justify-content: center; /* 수평 정렬 */
+  align-items: center; /* 수직 정렬 */
+  width: 20px;
+  height: 20px;
+}
