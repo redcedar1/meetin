@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="ko">{% load static %}
-  <link rel="stylesheet" href="{% static 'myapp/css/result.css' %}">
-  {% include 'myapp/index.html' %}
+<html lang="ko">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'myapp/css/result.css' %}" />
+  {% include 'index.html' %}
   <main class="ResultContent">
-
     <body>
       <div id="Result">
         <div id="box1">
-          <br><br>
-          <span style="color:rgb(241, 48, 128); text-emphasis-style: dot;">
+          <br /><br />
+          <span style="color: rgb(241, 48, 128); text-emphasis-style: dot">
             <strong>매칭된</strong>
           </span>
           <span> </span>
-          <span style="color:rgb(241, 48, 128); text-emphasis-style: dot;">
+          <span style="color: rgb(241, 48, 128); text-emphasis-style: dot">
             <strong>상대</strong>
           </span>
         </div>
@@ -24,14 +24,18 @@
         </div>
         <div id="box3" onclick="goYouInfo();">
           <p>
-            <strong>상대정보<br>
-              <span style="color:violet;">확인</span></strong>
+            <strong
+              >상대정보<br />
+              <span style="color: violet">확인</span></strong
+            >
           </p>
         </div>
         <div id="box4" onclick="goKakao();">
           <p>
-            <strong>카톡아이디<br>
-              <span style="color:violet;">확인</span></strong>
+            <strong
+              >카톡아이디<br />
+              <span style="color: violet">확인</span></strong
+            >
           </p>
         </div>
         <div id="box5">
@@ -42,14 +46,18 @@
         </div>
         <div id="box6" onclick="goYouInfo();">
           <p>
-            <strong>상대정보<br>
-              <span style="color:violet;">확인</span></strong>
+            <strong
+              >상대정보<br />
+              <span style="color: violet">확인</span></strong
+            >
           </p>
         </div>
         <div id="box7" onclick="goKakao();">
           <p>
-            <strong>카톡아이디<br>
-              <span style="color:violet;">확인</span></strong>
+            <strong
+              >카톡아이디<br />
+              <span style="color: violet">확인</span></strong
+            >
           </p>
         </div>
         <div id="box8">
@@ -60,14 +68,18 @@
         </div>
         <div id="box9" onclick="goYouInfo();">
           <p>
-            <strong>상대정보<br>
-              <span style="color:violet;">확인</span></strong>
+            <strong
+              >상대정보<br />
+              <span style="color: violet">확인</span></strong
+            >
           </p>
         </div>
         <div id="box10" onclick="goKakao();">
           <p>
-            <strong>카톡아이디<br>
-              <span style="color:violet;">확인</span></strong>
+            <strong
+              >카톡아이디<br />
+              <span style="color: violet">확인</span></strong
+            >
           </p>
         </div>
         <div id="box11">
@@ -78,14 +90,18 @@
         </div>
         <div id="box12" onclick="goYouInfo();">
           <p>
-            <strong>상대정보<br>
-              <span style="color:violet;">확인</span></strong>
+            <strong
+              >상대정보<br />
+              <span style="color: violet">확인</span></strong
+            >
           </p>
         </div>
         <div id="box13" onclick="goKakao();">
           <p>
-            <strong>카톡아이디<br>
-              <span style="color:violet;">확인</span></strong>
+            <strong
+              >카톡아이디<br />
+              <span style="color: violet">확인</span></strong
+            >
           </p>
         </div>
       </div>
@@ -93,7 +109,7 @@
         function goYouInfo() {
             location.href = '/youinfo/';
         }
-    
+
         function goKakao() {
             if (true) {
                 location.href = '/kakao/';
@@ -151,10 +167,9 @@
             box13.style.pointerEvents="all";
           }
          }
-    </script>
+      </script>
     </body>
   </main>
-
 </html>
 
-    <!--08.22 result에서 신청하지 않은 매칭 정보 누르면 error.html 나오도록 구현-->
+<!--08.22 result에서 신청하지 않은 매칭 정보 누르면 error.html 나오도록 구현-->

@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html lang="ko">{% load static %}
+<html lang="ko">
+  {% load static %}
 
-  <link rel="stylesheet" href="{% static 'myapp/css/matching.css' %}">
-  {% include 'myapp/index.html' %}
+  <link rel="stylesheet" href="{% static 'myapp/css/matching.css' %}" />
+  {% include 'index.html' %}
 
   <script>
     function changeDay() {
       /* if (// day==1
-      false) 
+      false)
         document
           .getElementById("inner1")
           .innerHTML = "<b><font color='violet'>1일차</font></b>";
-      else if (// day==2 
-      false) 
+      else if (// day==2
+      false)
         document
           .getElementById("inner1")
           .innerHTML = "<b><font color='violet'>2일차</font></b>"; */
@@ -36,21 +37,21 @@
         .getElementById("inner1")
         .innerHTML = "<b>매칭이 성사되지 않았습니다</b>";
       }
-      
+
     }
-    
+
     function matchingResult() {
       if (/* result=success */
-      false) 
+      false)
         document
           .getElementById("inner2")
           .innerHTML = "<b>♥매칭이<span id=one> 성사</span> 되었습니다♥</b>";
       else if (/* result=fail */
-      false) 
+      false)
         document
           .getElementById("inner2")
           .innerHTML = "<b>매칭이 성사되지 않았습니다</b>";
-      else 
+      else
         document.write("")
     }
 
@@ -95,11 +96,10 @@
     }
   </script>
   <main class="MatchingContent">
-
     <body>
       <div id="matching">
         <div class="box1">
-          <br><br>
+          <br /><br />
           <div id="inner1"></div>
           <script>
             changeDay();
@@ -114,21 +114,36 @@
         <div id="box5" onclick="Home();">
           <!-- 버튼이 box7과 반대로 눌려서 함수 둘이 바꿈 -->
           <p>
-            <strong>소개팅 결과
-              <span style="color:rgb(241, 48, 128); text-emphasis-style: dot;">확인</span>!</strong>
+            <strong
+              >소개팅 결과
+              <span style="color: rgb(241, 48, 128); text-emphasis-style: dot"
+                >확인</span
+              >!</strong
+            >
           </p>
           <!-- 카톡 아이디 알려주는 창으로 -->
         </div>
-        <div id="box6" onclick="/* 백에서 리턴값 fail로 바꿔주고 아님 여기서 바로 값 바꾸고*/ Home();">
+        <div
+          id="box6"
+          onclick="/* 백에서 리턴값 fail로 바꿔주고 아님 여기서 바로 값 바꾸고*/ Home();"
+        >
           <p>
-            <strong>미팅 결과
-              <span style="color:rgb(241, 48, 128); text-emphasis-style: dot;">확인</span>!</strong>
+            <strong
+              >미팅 결과
+              <span style="color: rgb(241, 48, 128); text-emphasis-style: dot"
+                >확인</span
+              >!</strong
+            >
           </p>
         </div>
         <div id="box7" onclick="go2();">
           <p>
-            <strong>매칭
-              <span style="color:rgb(241, 48, 128); text-emphasis-style: dot;">정보 변경</span></strong>
+            <strong
+              >매칭
+              <span style="color: rgb(241, 48, 128); text-emphasis-style: dot"
+                >정보 변경</span
+              ></strong
+            >
           </p>
         </div>
         <div id="box8" onclick="go3();/*매칭 멈추기 상태 함수(백엔드)*/">
@@ -142,37 +157,36 @@
         </script>
       </div>
       <script>
-        /* function go2() {
-          //백에 매칭 동의 누른 거 전달되게 하고 시간안에 비동의 안 하면 자동 동의 되게
-          location.href = '/matching2/';
-        } */
+         /* function go2() {
+           //백에 매칭 동의 누른 거 전달되게 하고 시간안에 비동의 안 하면 자동 동의 되게
+           location.href = '/matching2/';
+         } */
 
-        function go3() {
-          /* 백에 매칭 동의 누른 거 전달되게 하고 시간안에 비동의 안 하면 자동 동의 되게 */
-          location.href = '/matching2/';
-        }
+         function go3() {
+           /* 백에 매칭 동의 누른 거 전달되게 하고 시간안에 비동의 안 하면 자동 동의 되게 */
+           location.href = '/matching2/';
+         }
 
-        function Home() {
-          location.href = '/meeting/';
-        }
+         function Home() {
+           location.href = '/meeting/';
+         }
 
-        function goInfo() {
-          location.href = '/youinfo/';
-        }
+         function goInfo() {
+           location.href = '/youinfo/';
+         }
 
-        var appli = {{ matched_profile.matching_application }};
-        var suc= {{ matched_profile.matching_success }};
-       gomeeting(appli, suc);
+         var appli = {{ matched_profile.matching_application }};
+         var suc= {{ matched_profile.matching_success }};
+        gomeeting(appli, suc);
 
-        function gomeeting(appli, suc) {
-          var box6 = document.getElementById("box6");
-          if(appli==1 && suc==1) {
-            box6.style.opacity=1;
-            box6.style.pointerEvents="all";
-          }
-        }
+         function gomeeting(appli, suc) {
+           var box6 = document.getElementById("box6");
+           if(appli==1 && suc==1) {
+             box6.style.opacity=1;
+             box6.style.pointerEvents="all";
+           }
+         }
       </script>
     </body>
   </main>
-
 </html>
