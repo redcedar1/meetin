@@ -1,6 +1,10 @@
 import requests
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
+def index(request):
+   return redirect("/home")
 
 def home(request):
 
