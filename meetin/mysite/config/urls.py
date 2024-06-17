@@ -5,6 +5,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('main/', include('common.urls')),
-    path('kakaopay/', include('kakaopay.urls')),
-    path('room/', include('room.urls')),
 ]
