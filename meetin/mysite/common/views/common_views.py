@@ -32,3 +32,43 @@ def kakaoLoginLogicRedirect(request):
 
 
     return redirect("/home")  # 로그인 완료 후엔 home페이지로
+
+@csrf_exempt
+def good(request):
+
+    return render(request, "myapp/good.html")
+
+@csrf_exempt
+def go(request):
+
+    return render(request, "myapp/go.html")
+
+
+@csrf_exempt
+def alonechoose(request):
+
+    return render(request, "myapp/alonechoose.html")
+@csrf_exempt
+def alonechoose2(request):
+
+    return render(request, "myapp/alonechoose2.html")
+@csrf_exempt
+def army(request):
+
+    return render(request, "myapp/army.html")
+@csrf_exempt
+def body(request):
+
+    return render(request, "myapp/body.html")
+@csrf_exempt
+def eyes(request):
+
+    return render(request, "myapp/eyes.html")
+@csrf_exempt
+def height(request):
+
+    return render(request, "myapp/height.html")
+@csrf_exempt
+def hobby(request):
+
+    return render(request, "myapp/hobby.html")
