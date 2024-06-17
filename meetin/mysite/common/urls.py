@@ -6,5 +6,16 @@ app_name = "common"
 urlpatterns = [
     path('', common_views.index, name="index"),
     path('home/', common_views.home, name='home'),
-    path('menu/', common_views.menu,name='menu'),
+    path('matching/', common_views.matching, name='matching'),
+    path('matching2/', common_views.matching2, name='matching2'),
+    path('matching3/', common_views.matching3, name='matching3'),
+    path('error/', common_views.error, name='error'),
+    path('result/', common_views.result, name='result'),
+    path('menu/', common_views.menu, name='menu'),
+    path('meeting/', common_views.meeting, name='meeting'),
+    path('meeting2/', common_views.meeting2, name='meeting2'),
+    path('good/', common_views.good, name='good'),
+    path('fail/', common_views.fail, name='fail'),
+    path('go/', common_views.go, name='go'),
+    path('use/', common_views.use, name='use'),
 ]
