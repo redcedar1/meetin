@@ -13,7 +13,7 @@ def home(request):
 @csrf_exempt
 def menu(request):
 
-    return render(request,"myapp/menu.html")
+    return render(request,"menu.html")
 
 
 def kakaologin(request):
@@ -24,7 +24,7 @@ def kakaologin(request):
 
         return redirect("/home")  # 로그인 되어있으면 home페이지로 #로그인 되어있으면 home페이지로
 
-    return render(request, "myapp/kakaologin.html")  # 로그인 안되어있으면 로그인페이지로
+    return render(request, "kakaologin.html")  # 로그인 안되어있으면 로그인페이지로
 
 
 def kakaoLoginLogic(request):
@@ -40,39 +40,39 @@ def kakaoLoginLogicRedirect(request):
 @csrf_exempt
 def good(request):
 
-    return render(request, "myapp/good.html")
+    return render(request, "good.html")
 
 @csrf_exempt
 def go(request):
 
-    return render(request, "myapp/go.html")
+    return render(request, "go.html")
 
 
 @csrf_exempt
 def alonechoose(request):
 
-    return render(request, "myapp/alonechoose.html")
+    return render(request, "alonechoose.html")
 @csrf_exempt
 def alonechoose2(request):
 
-    return render(request, "myapp/alonechoose2.html")
+    return render(request, "alonechoose2.html")
 @csrf_exempt
 def army(request):
 
-    return render(request, "myapp/army.html")
+    return render(request, "army.html")
 @csrf_exempt
 def body(request):
 
-    return render(request, "myapp/body.html")
+    return render(request, "body.html")
 @csrf_exempt
 def eyes(request):
 
-    return render(request, "myapp/eyes.html")
+    return render(request, "eyes.html")
 @csrf_exempt
 def height(request):
 
-    return render(request, "myapp/height.html")
+    return render(request, "height.html")
 @csrf_exempt
 def hobby(request):
 
-    return render(request, "myapp/hobby.html")
+    return render(request, "hobby.html")
