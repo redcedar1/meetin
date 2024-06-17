@@ -1,36 +1,37 @@
-<!DOCTYPE html> 
-<html lang="ko">
+<!DOCTYPE html>
+<html lang="ko">{% load static %}
+  {% include 'myapp/index.html' %}
+  <link rel="stylesheet" href="{% static 'myapp/css/home.css' %}">
 
-<link rel="stylesheet" href="{% static 'myapp/css/home.css' %}" />
   <main class="HomeContent">
 
     <body>
       <br><br>
       <h2>
-        <span style="color:rgb(241, 48, 128); text-emphasis-style: dot;">1</span>
+        <span style="color:rgb(241, 48, 128); text-emphasis-style: dot;">당신의</span>
         <span> </span>
-        <span style="color:rgb(241, 48, 128); text-emphasis-style: dot;">2</span>
-        3</h2>
+        <span style="color:rgb(241, 48, 128); text-emphasis-style: dot;">인연</span>
+        은 어디에?</h2>
       <br><br>
       <div id="start">
         <div class="box1" onclick="startFun1();">
-          <strong>4</strong>
+          <strong>홍대축제에서</strong>
         </div>
         <div class="box2">
-          5<br>6
+          홍대축제 3일 한정<br>당일 매칭이 가능해요!
         </div>
         <div class="box3" onclick="startFun2();">
-          <strong>7</strong>
+          <strong>우리학교와</strong>
         </div>
         <div class="box4">
-          8 <br> 9
+          정식 출시 후에 <br> 만나요!
           <!--우리학교 사람과<br>만날 수 있어요!-->
         </div>
         <div class="box5" onclick="startFun3();">
-          <strong>10</strong>
+          <strong>다른학교와</strong>
         </div>
         <div class="box6">
-          11 <br>12
+          정식 출시 후에 <br> 만나요!
           <!--다른학교 사람과<br>만날 수 있어요!-->
         </div>
         <script>
