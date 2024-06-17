@@ -8,7 +8,7 @@ def index(request):
 
 def home(request):
 
-    return render(request, "myapp/home.html")
+    return render(request, "home.html")
 
 @csrf_exempt
 def menu(request):
