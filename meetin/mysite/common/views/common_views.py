@@ -76,3 +76,22 @@ def height(request):
 def hobby(request):
 
     return render(request, "hobby.html")
+
+@csrf_exempt
+def meeting(request):
+    if request.method == "POST":
+        peoplenum = request.POST.get('submit_peoplenum') #인원 선택 정보 추출
+        avgage = request.POST.get('submit_age')
+        return redirect("/meeting2")  # /home/meeting2로 페이지 전달
+
+    return render(request, "myapp/meeting.html")
+
+
+@csrf_exempt
+def meeting2(request):
+    if request.method == "POST":
+        jobs = request.POST.get('submit_job').split(', ')
+        ages = request.POST.get('submit_age').split(', ')
+        return redirect("/good/")
+
+    return render(request, "myapp/meeting2.html")
