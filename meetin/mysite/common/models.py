@@ -24,7 +24,7 @@ class Info(models.Model):
     you_kakao_id = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return str(self.user)
+        return str(self.pk)
 
 
 class menInfo(models.Model):
@@ -70,7 +70,7 @@ class menInfo(models.Model):
                                 related_name="m_matched")
 
     def __str__(self):
-        return str(self.user)
+        return str(self.pk)
 
 
 class womenInfo(models.Model):
@@ -115,7 +115,7 @@ class womenInfo(models.Model):
     m_match = models.ForeignKey('menInfo', on_delete=models.SET_NULL, null=True, blank=True, db_column='m_match')
 
     def __str__(self):
-        return str(self.user)
+        return str(self.pk)
 
 class matchingInfo(models.Model):
     #매칭정보의 고유번호(매칭정보의 기본키)
