@@ -90,7 +90,7 @@ def meeting(request):
         avgage = request.POST.get('submit_age')
         return redirect("/meeting2")  # /home/meeting2로 페이지 전달
 
-    return render(request, "myapp/meeting.html")
+    return render(request, "meeting.html")
 
 
 @csrf_exempt
@@ -101,23 +101,23 @@ def meeting2(request):
         ages = request.POST.get('submit_age').split(', ')
         return redirect("/good/")
 
-    return render(request, "myapp/meeting2.html")
+    return render(request, "meeting2.html")
 
 
 @csrf_exempt
 def major(request):
-    return render(request, "myapp/major.html")
+    return render(request, "major.html")
 
 
 @csrf_exempt
 def mbti(request):
-    return render(request, "myapp/mbti.html")
+    return render(request, "mbti.html")
 
 
 @csrf_exempt
 def myinfo(request):
     user_info = Info.objects.filter(kakao_id=0)
-    return render(request, "myapp/myinfo.html")
+    return render(request, "myinfo.html")
 
 def is_valid_transition(current_page, requested_page):
     # 요청한 페이지가 현재 페이지에서의 올바른 다음 페이지인지 확인
