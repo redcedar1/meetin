@@ -88,6 +88,11 @@ def meeting(request):
         user_info = Info.objects.filter(kakao_id=0)
         peoplenum = request.POST.get('submit_peoplenum') #인원 선택 정보 추출
         avgage = request.POST.get('submit_age')
+
+        user_info.peoplenum = ', '.join(peoplenum)
+        user_info.avgage = avgage
+        user_info.save()
+
         return redirect("/meeting2")  # /home/meeting2로 페이지 전달
 
     return render(request, "meeting.html")
@@ -99,6 +104,11 @@ def meeting2(request):
         user_info = Info.objects.filter(kakao_id=0)
         jobs = request.POST.get('submit_job').split(', ')
         ages = request.POST.get('submit_age').split(', ')
+
+        user_info.jobs = ', '.join(jobs)
+        user_info.ages = ', '.join(ages)
+        user_info.save()
+
         return redirect("/good/")
 
     return render(request, "meeting2.html")
