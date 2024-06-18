@@ -12,10 +12,11 @@ urlpatterns = [
     #path('error/', common_views.error, name='error'),
     #path('result/', common_views.result, name='result'),
     path('menu/', common_views.menu, name='menu'),
-    #path('meeting/', common_views.meeting, name='meeting'),
-    #path('meeting2/', common_views.meeting2, name='meeting2'),
+    path('meeting/', common_views.meeting, name='meeting'),
+    path('meeting2/', common_views.meeting2, name='meeting2'),
     path('good/', common_views.good, name='good'),
     #path('fail/', common_views.fail, name='fail'),
     path('go/', common_views.go, name='go'),
     #path('use/', common_views.use, name='use'),
+    path('my/<id>/',common_views.my,name='my'),
 ]
