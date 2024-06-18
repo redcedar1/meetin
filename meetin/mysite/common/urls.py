@@ -19,4 +19,6 @@ urlpatterns = [
     path('go/', common_views.go, name='go'),
     #path('use/', common_views.use, name='use'),
     path('my/<id>/',common_views.my,name='my'),
+    path('you/', common_views.you, name='you'),
+    path('choose/', common_views.choose, name='choose'),
 ]
