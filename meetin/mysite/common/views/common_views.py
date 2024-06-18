@@ -234,3 +234,13 @@ def my(request, id):
 
     context = {'count': index}
     return render(request, "my.html", context)
+
+@csrf_exempt
+def you(request):
+
+    return render(request, "you.html")
+
+@csrf_exempt
+def choose(request):
+    #홍대축제에서 만나기 누르면 choose에서는 무조건 meeting으로 redirect
+    return render(request, "choose.html")
