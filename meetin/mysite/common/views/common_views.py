@@ -25,7 +25,18 @@ def kakaologin(request):
     # context = {'check':False} 지운다?
     access_token = request.session.get("access_token", None)
     if access_token:  # 만약 세션에 access_token이 있으면(==로그인 되어 있으면)
-
+        account_info = requests.get("https://kapi.kakao.com/v2/user/me",
+                                    headers={"Authorization": f"Bearer {access_token}"}).json()
+        kakao_id = account_info.get("id")
+        try:  # 어차피 access_token이 있어야 하니까 예외 처리는 없어도 될 듯
+            user_profile = Info.objects.get(kakao_id=kakao_id)  # 카카오톡 ID를 사용하여 사용자 정보 조회
+            # print(kakao_id) 지운다?
+            # context['user_profile'] = user_profile 지운다?
+        except Info.DoesNotExist:
+            # 새로운 레코드 생성
+            user_profile = Info(kakao_id=kakao_id)
+            user_profile.save()
+            # context['user_profile'] = user_profile 지운다?
 
         return redirect("/home")  # 로그인 되어있으면 home페이지로 #로그인 되어있으면 home페이지로
 
@@ -33,14 +44,33 @@ def kakaologin(request):
 
 
 def kakaoLoginLogic(request):
-
+    _restApiKey = '60010e5242c371826d538b43def648c3'  # 입력필요
+    _redirectUrl = 'http://127.0.0.1:8000/kakaoLoginLogicRedirect'
+    _url = f'https://kauth.kakao.com/oauth/authorize?client_id={_restApiKey}&redirect_uri={_redirectUrl}&response_type=code'
     return redirect(_url)
 
 
 def kakaoLoginLogicRedirect(request):
-
+    _qs = request.GET['code']
+    _restApiKey = '60010e5242c371826d538b43def648c3'  # 입력필요
+    _redirect_uri = 'http://127.0.0.1:8000/kakaoLoginLogicRedirect'
+    _url = f'https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={_restApiKey}&redirect_uri={_redirect_uri}&code={_qs}'
+    _res = requests.post(_url)
+    _result = _res.json()
+    request.session['access_token'] = _result['access_token']
+    request.session.modified = True
 
     return redirect("/home")  # 로그인 완료 후엔 home페이지로
+
+
+def kakaoLogout(request):
+    access_token = request.session.get("access_token", None)
+    if access_token == None:  # 로그인 안돼있으면
+        return redirect("/kakaologin")  # 무지성 로그아웃 누른애는 로그인하도록 로그인창으로 보내기
+
+    else:
+        del request.session['access_token']
+        return render(request, 'loginoutsuccess.html')
 
 @csrf_exempt
 def good(request):

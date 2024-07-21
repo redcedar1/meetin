@@ -21,4 +21,8 @@ urlpatterns = [
     path('my/<id>/',common_views.my,name='my'),
     path('you/', common_views.you, name='you'),
     path('choose/', common_views.choose, name='choose'),
+    path('kakaologin/', common_views.kakaologin, name='kakaologin'),
+    path('kakaoLoginLogic/', common_views.kakaoLoginLogic),
+    path('kakaoLoginLogicRedirect/', common_views.kakaoLoginLogicRedirect),
+    path('kakaoLogout/', common_views.kakaoLogout),
 ]
