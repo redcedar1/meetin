@@ -10,10 +10,22 @@ from ..models import Info
 def index(request):
    return redirect("/home")
 
-def home(request):
-    user_info = Info.objects.filter(kakao_id=0)
 
-    return render(request, "home.html")
+@csrf_exempt
+def home(request):
+    logged = 0
+
+    access_token = request.session.get("access_token", None)
+    if access_token:
+        logged = 1
+        account_info = requests.get("https://kapi.kakao.com/v2/user/me",
+                                    headers={"Authorization": f"Bearer {access_token}"}).json()
+        kakao_id = account_info.get("id")
+        user_info = Info.objects.filter(kakao_id=kakao_id).first()
+        if user_info.kakaotalk_id:
+            logged = 2
+    context = {'logged': logged}
+    return render(request, "myapp/home.html", context)
 
 @csrf_exempt
 def menu(request):
