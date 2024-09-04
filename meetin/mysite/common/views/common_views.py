@@ -25,7 +25,7 @@ def home(request):
         if user_info.kakaotalk_id:
             logged = 2
     context = {'logged': logged}
-    return render(request, "myapp/home.html", context)
+    return render(request, "home.html", context)
 
 @csrf_exempt
 def menu(request):
@@ -296,3 +296,40 @@ def you(request):
 def choose(request):
     #홍대축제에서 만나기 누르면 choose에서는 무조건 meeting으로 redirect
     return render(request, "choose.html")
+
+@csrf_exempt
+def success(request):
+        return render(request, "success.html")
+
+@csrf_exempt
+def fail(request):
+
+    return render(request, "fail.html")
+
+@csrf_exempt
+def youinfo(request):
+
+    return render(request, "youinfo.html")
+
+@csrf_exempt
+def kakaoid(request):
+    access_token = request.session.get("access_token",None)
+    if access_token == None: #로그인 안돼있으면
+        return redirect("/kakaologin")
+
+    account_info = requests.get("https://kapi.kakao.com/v2/user/me",headers={"Authorization": f"Bearer {access_token}"}).json()
+
+    if request.method == "POST":
+        kakao_id = account_info.get("id")
+
+        # kakao_id를 사용하여 해당 사용자의 레코드 가져오기
+        user_info = Info.objects.get(kakao_id=kakao_id)
+
+        kakaotalk_id = request.POST.get("kakaoid")
+        if kakaotalk_id is not None:
+            # 가져온 레코드에 kakaotalk_id 할당 및 저장
+            user_info.kakaotalk_id = kakaotalk_id
+            user_info.save()
+            return redirect("/go")
+
+    return render(request, "kakaoid.html")
