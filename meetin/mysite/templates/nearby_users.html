@@ -18,8 +18,7 @@
     </style>
 </head>
 <body>
-    <h1>meetin users</h1>
-    <button id="getNearbyUsersButton">show</button>
+    <h1>Nearby Users</h1>
     <div id="map"></div>
 
     <script>
@@ -30,8 +29,60 @@
         };
 
         var map = new kakao.maps.Map(mapContainer, mapOption);  // 지도 생성
+        var markers = [];  // 마커를 저장하는 배열
 
-        document.getElementById('getNearbyUsersButton').addEventListener('click', function() {
+        function fetchNearbyUsers(latitude, longitude) {
+            // 서버로 사용자 위치와 반경 10km 요청
+            fetch(`/updatelocation/api/nearby-users/?latitude=${latitude}&longitude=${longitude}&distance=10000`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Nearby users:', data.nearby_users);
+
+                    // 이전 마커 제거
+                    markers.forEach(marker => marker.setMap(null));
+                    markers = [];
+
+                    data.nearby_users.forEach(user => {
+                        var userPosition = new kakao.maps.LatLng(user.latitude, user.longitude);
+
+                        // 지도에 다른 사용자 위치에 마커 표시
+                        var marker = new kakao.maps.Marker({
+                            map: map,
+                            position: userPosition
+                        });
+                        markers.push(marker);  // 새 마커 저장
+
+                        var content = `<div style="padding:5px;">
+                                          <strong>${user.username}</strong><br>
+                                          나이: ${user.age}<br>
+                                          전공: ${user.major}<br>
+                                          mbti: ${user.mbti}<br>
+                                          Last seen: ${user.timestamp}
+                                       </div>`;
+
+                        var infowindow = new kakao.maps.InfoWindow({
+                            content: content
+                        });
+
+                        // 마커에 마우스를 올렸을 때 인포윈도우 열기
+                        kakao.maps.event.addListener(marker, 'mouseover', function() {
+                            infowindow.open(map, marker);
+                        });
+
+                        // 마커에서 마우스를 벗어났을 때 인포윈도우 닫기
+                        kakao.maps.event.addListener(marker, 'mouseout', function() {
+                            infowindow.close();
+                        });
+                    });
+
+                    // 근처에 사용자가 있으면 알림 표시
+                    if (data.nearby_users.length > 0) {
+                        alert("근처에 사용자가 있습니다!");
+                    }
+                });
+        }
+
+        function updateLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function(position) {
                     var latitude = position.coords.latitude;
@@ -50,52 +101,22 @@
 
                     myInfoWindow.open(map, myMarker);
 
-                    // 서버로 사용자 위치와 반경 10km 요청
-                    fetch(`/updatelocation/api/nearby-users/?latitude=${latitude}&longitude=${longitude}&distance=10000`)
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log('Nearby users:', data.nearby_users);
+                    // 지도 중심을 현재 사용자 위치로 설정
+                    map.setCenter(myPosition);
 
-                            data.nearby_users.forEach(user => {
-                                var userPosition = new kakao.maps.LatLng(user.latitude, user.longitude);
-
-                                // 지도에 다른 사용자 위치에 마커 표시
-                                var marker = new kakao.maps.Marker({
-                                    map: map,
-                                    position: userPosition
-                                });
-
-                                var content = `<div style="padding:5px;">
-                                                  <strong>${user.username}</strong><br>
-                                                  나이: ${user.age}<br>
-                                                  전공: ${user.major}<br>
-                                                  mbti: ${user.mbti}<br>
-                                                  Last seen: ${user.timestamp}
-                                               </div>`;
-
-                                var infowindow = new kakao.maps.InfoWindow({
-                                    content: content
-                                });
-
-                                // 마커에 마우스를 올렸을 때 인포윈도우 열기
-                                kakao.maps.event.addListener(marker, 'mouseover', function() {
-                                    infowindow.open(map, marker);
-                                });
-
-                                // 마커에서 마우스를 벗어났을 때 인포윈도우 닫기
-                                kakao.maps.event.addListener(marker, 'mouseout', function() {
-                                    infowindow.close();
-                                });
-                            });
-
-                            // 지도 중심을 현재 사용자 위치로 설정
-                            map.setCenter(myPosition);
-                        });
+                    // 근처 사용자 정보 가져오기
+                    fetchNearbyUsers(latitude, longitude);
                 });
             } else {
                 alert('Geolocation is not supported by this browser.');
             }
-        });
+        }
+
+        // 10초마다 위치 업데이트
+        setInterval(updateLocation, 10000);
+
+        // 페이지가 로드될 때 최초 실행
+        window.onload = updateLocation;
     </script>
 </body>
 </html>
