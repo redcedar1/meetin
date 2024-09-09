@@ -48,6 +48,9 @@ def nearby_users(request):
             nearby_users.append({
                 'user_id': location.user.id,
                 'username': location.user.kakao_id,
+                'age': location.user.age,
+                'major': location.user.major,
+                'mbti': location.user.mbti,
                 'latitude': location.latitude,
                 'longitude': location.longitude,
                 'timestamp': location.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
