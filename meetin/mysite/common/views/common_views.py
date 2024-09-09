@@ -22,8 +22,6 @@ def home(request):
                                     headers={"Authorization": f"Bearer {access_token}"}).json()
         kakao_id = account_info.get("id")
         user_info = Info.objects.filter(kakao_id=kakao_id).first()
-        if user_info.kakaotalk_id:
-            logged = 2
     context = {'logged': logged}
     return render(request, "home.html", context)
 
