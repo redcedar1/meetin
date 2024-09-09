@@ -136,4 +136,4 @@ class Location(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.latitude}, {self.longitude} at {self.timestamp}"
+        return f"{self.user.kakao_id} - {self.latitude}, {self.longitude} at {self.timestamp}"
