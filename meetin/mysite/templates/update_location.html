@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Update</title>
+</head>
+<body>
+    <h1>Update Your Location</h1>
+    <button id="updateLocationButton">Update Location</button>
+
+    <script>
+        document.getElementById('updateLocationButton').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
+
+                    fetch('/api/update-location/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'  // Django CSRF token
+                        },
+                        body: JSON.stringify({
+                            'latitude': latitude,
+                            'longitude': longitude
+                        })
+                    }).then(response => response.json())
+                      .then(data => {
+                          alert('Location updated successfully!');
+                          console.log(data);
+                      });
+                });
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+        });
+    </script>
+</body>
+</html>

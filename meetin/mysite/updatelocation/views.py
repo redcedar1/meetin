@@ -1,7 +1,8 @@
 from django.http import JsonResponse
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-from .models import Location
+from common.models import Location
 from geopy.distance import geodesic
 import json
 
@@ -45,3 +46,8 @@ def nearby_users(request):
 
     return JsonResponse({'nearby_users': nearby_users})
 
+def update_location_view(request):
+    return render(request, 'update_location.html')
+
+def nearby_users_view(request):
+    return render(request, 'nearby_users.html')
