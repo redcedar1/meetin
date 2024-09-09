@@ -4,12 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nearby Users</title>
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_APP_KEY"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6e1552a08194288312e667e2fb004368"></script>
+    <style>
+        /* HTML, body의 높이와 너비를 100%로 설정 */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 지도 div가 화면 전체를 차지하게 설정 */
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 <body>
     <h1>Nearby Users</h1>
     <button id="getNearbyUsersButton">Show Nearby Users</button>
-    <div id="map" style="width:100%;height:350px;"></div>
+    <div id="map"></div>
 
     <script>
         var mapContainer = document.getElementById('map');
@@ -27,7 +41,7 @@
                     var longitude = position.coords.longitude;
 
                     // 서버로 사용자 위치와 반경 1km 요청
-                    fetch(`/api/nearby-users?latitude=${latitude}&longitude=${longitude}&distance=1`)
+                    fetch(`/updatelocation/api/nearby-users/?latitude=${latitude}&longitude=${longitude}&distance=10000`)
                         .then(response => response.json())
                         .then(data => {
                             console.log('Nearby users:', data.nearby_users);
