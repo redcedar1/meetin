@@ -54,7 +54,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:3000/','http://ec2-3-38-208-163.ap-northeast-2.compute.amazonaws.com:8080','http://localhost:8000/']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000/','http://ec2-52-79-77-37.ap-northeast-2.compute.amazonaws.com:8080','http://localhost:8000/']
 
 ROOT_URLCONF = 'config.urls'
 
@@ -80,7 +80,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = my_settings.DATABASES
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 
 # Password validation
