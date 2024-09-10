@@ -125,15 +125,23 @@ def hobby(request):
 @csrf_exempt
 def meeting(request):
     if request.method == "POST":
-        user_info = Info.objects.filter(kakao_id=0)
-        peoplenum = request.POST.get('submit_peoplenum') #인원 선택 정보 추출
+        try:
+            # kakao_id=0인 하나의 Info 객체를 가져옴
+            user_info = Info.objects.get(kakao_id=0)
+        except Info.DoesNotExist:
+            # Info 객체가 없을 경우 예외 처리
+            return render(request, "error.html", {"message": "User not found"})
+
+        # 인원 선택 정보 추출
+        peoplenum = request.POST.getlist('submit_peoplenum')  # 'getlist()'로 리스트 형태로 가져옴
         avgage = request.POST.get('submit_age')
 
+        # peoplenum 리스트를 문자열로 합침
         user_info.peoplenum = ', '.join(peoplenum)
         user_info.avgage = avgage
         user_info.save()
 
-        return redirect("/meeting2")  # /home/meeting2로 페이지 전달
+        return redirect("/meeting2")  # /meeting2로 리다이렉트
 
     return render(request, "meeting.html")
 
