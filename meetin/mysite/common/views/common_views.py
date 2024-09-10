@@ -328,7 +328,7 @@ def kakaoid(request):
         kakao_id = account_info.get("id")
 
         # kakao_id를 사용하여 해당 사용자의 레코드 가져오기
-        user_info = Info.objects.get(kakao_id=kakao_id)
+        user_info = Info.objects.get(kakao_id=0)
 
         kakaotalk_id = request.POST.get("kakaoid")
         if kakaotalk_id is not None:
