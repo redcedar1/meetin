@@ -178,6 +178,13 @@ def is_valid_transition(current_page, requested_page):
 
 @csrf_exempt
 def my(request, id):
+    access_token = request.session.get("access_token", None)
+    if access_token:
+        logged = 1
+        account_info = requests.get("https://kapi.kakao.com/v2/user/me",
+                                    headers={"Authorization": f"Bearer {access_token}"}).json()
+
+    kakao_id = account_info.get("id")
     if request.method == "GET":
         if int(id) == 1:
             if request.session.get('current_page'):
@@ -245,7 +252,7 @@ def my(request, id):
         index2 = index + 1
         if index2 > 12:  # 모든 정보를 입력한 경우
             # 세션에 저장된 정보를 하나의 Info 객체에 저장하고 세션 초기화
-            user_info = Info.objects.get(kakao_id=0)
+            user_info = Info.objects.get(kakao_id=kakao_id)
             if user_info:
                 user_info.age = request.session.get('age')
                 user_info.sex = request.session.get('sex')
