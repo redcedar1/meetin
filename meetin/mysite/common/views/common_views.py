@@ -182,8 +182,18 @@ def mbti(request):
 
 @csrf_exempt
 def myinfo(request):
-    user_info = Info.objects.filter(kakao_id=0)
-    return render(request, "myinfo.html")
+    access_token = request.session.get("access_token", None)
+    if access_token == None:  # 로그인 안돼있으면
+        return render(request, "myapp/kakaologin.html")  # 로그인 시키기
+
+    account_info = requests.get("https://kapi.kakao.com/v2/user/me",
+                                headers={"Authorization": f"Bearer {access_token}"}).json()
+    kakao_id = account_info.get("id")
+
+    user_profile = Info.objects.get(kakao_id=0)  # user_info로 바꿀까?
+    context = {'user_profile': user_profile,  # 사용자 정보를 context에 추가
+               }
+    return render(request, "myinfo.html", context)
 
 def is_valid_transition(current_page, requested_page):
     # 요청한 페이지가 현재 페이지에서의 올바른 다음 페이지인지 확인
