@@ -149,15 +149,23 @@ def meeting(request):
 @csrf_exempt
 def meeting2(request):
     if request.method == "POST":
-        user_info = Info.objects.filter(kakao_id=0)
-        jobs = request.POST.get('submit_job').split(', ')
-        ages = request.POST.get('submit_age').split(', ')
+        try:
+            # kakao_id=0인 하나의 Info 객체를 가져옴
+            user_info = Info.objects.get(kakao_id=0)
+        except Info.DoesNotExist:
+            # Info 객체가 없을 경우 예외 처리
+            return render(request, "error.html", {"message": "User not found"})
 
+        # 'submit_job'과 'submit_age' 필드를 처리
+        jobs = request.POST.get('submit_job', '').split(', ')
+        ages = request.POST.get('submit_age', '').split(', ')
+
+        # jobs와 ages 리스트를 문자열로 변환 후 저장
         user_info.jobs = ', '.join(jobs)
         user_info.ages = ', '.join(ages)
         user_info.save()
 
-        return redirect("/good/")
+        return redirect("/good/")  # 성공적으로 처리되면 /good/으로 리다이렉트
 
     return render(request, "meeting2.html")
 
