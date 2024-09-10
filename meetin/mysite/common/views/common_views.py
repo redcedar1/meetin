@@ -252,7 +252,7 @@ def my(request, id):
         index2 = index + 1
         if index2 > 12:  # 모든 정보를 입력한 경우
             # 세션에 저장된 정보를 하나의 Info 객체에 저장하고 세션 초기화
-            user_info = Info.objects.get(kakao_id=kakao_id)
+            user_info = Info.objects.get(kakao_id=0)
             if user_info:
                 user_info.age = request.session.get('age')
                 user_info.sex = request.session.get('sex')
