@@ -1,9 +1,13 @@
 import requests
+from django.db.models import Q
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
+from requests import Response
+from rest_framework import status
+from rest_framework.views import APIView
 
-from ..models import Info
+from ..models import Info, womenInfo, menInfo, matchingInfo
 
 
 @csrf_exempt
@@ -129,15 +133,14 @@ def meeting(request):
             # kakao_id=0인 하나의 Info 객체를 가져옴
             user_info = Info.objects.get(kakao_id=0)
         except Info.DoesNotExist:
-            # Info 객체가 없을 경우 예외 처리
             return render(request, "error.html", {"message": "User not found"})
 
         # 인원 선택 정보 추출
-        peoplenum = request.POST.getlist('submit_peoplenum')  # 'getlist()'로 리스트 형태로 가져옴
+        peoplenum = request.POST.get('submit_peoplenum')  # 단일 값으로 가져옴
         avgage = request.POST.get('submit_age')
 
-        # peoplenum 리스트를 문자열로 합침
-        user_info.peoplenum = ', '.join(peoplenum)
+        # 값 저장
+        user_info.peoplenum = peoplenum
         user_info.avgage = avgage
         user_info.save()
 
@@ -153,16 +156,15 @@ def meeting2(request):
             # kakao_id=0인 하나의 Info 객체를 가져옴
             user_info = Info.objects.get(kakao_id=0)
         except Info.DoesNotExist:
-            # Info 객체가 없을 경우 예외 처리
             return render(request, "error.html", {"message": "User not found"})
 
         # 'submit_job'과 'submit_age' 필드를 처리
-        jobs = request.POST.get('submit_job', '').split(', ')
-        ages = request.POST.get('submit_age', '').split(', ')
+        jobs = request.POST.getlist('submit_job')  # 복수 선택 가능 (리스트로 받음)
+        age_ranges = request.POST.getlist('submit_age')  # 복수 선택 가능 (리스트로 받음)
 
-        # jobs와 ages 리스트를 문자열로 변환 후 저장
+        # jobs와 age_ranges 리스트를 문자열로 변환 후 저장
         user_info.jobs = ', '.join(jobs)
-        user_info.ages = ', '.join(ages)
+        user_info.ages = ', '.join(age_ranges)
         user_info.save()
 
         return redirect("/good/")  # 성공적으로 처리되면 /good/으로 리다이렉트
@@ -364,3 +366,48 @@ def kakaoid(request):
             return redirect("/go")
 
     return render(request, "kakaoid.html")
+
+def calculate_match_score(user, potential_match):
+    score = 0
+
+    if potential_match.age:
+        age_diff = abs(user.age - potential_match.age)
+        score += max(0, 10 - age_diff)
+
+    if user.job and potential_match.job and user.job == potential_match.job:
+        score += 5
+
+    if user.mbti and potential_match.mbti and user.mbti == potential_match.mbti:
+        score += 10
+
+    if user.height and potential_match.height:
+        height_diff = abs(user.height - potential_match.height)
+        score += max(0, 5 - (height_diff // 5))
+
+    if user.hobby and potential_match.hobby:
+        user_hobbies = set(user.hobby.split(', '))
+        match_hobbies = set(potential_match.hobby.split(', '))
+        common_hobbies = len(user_hobbies & match_hobbies)
+        score += common_hobbies * 2
+
+    return score
+
+def find_matches(user_info):
+    opposite_sex = 'male' if user_info.sex == 'female' else 'female'
+
+    individual_matches = Info.objects.filter(
+        Q(sex=opposite_sex),
+        Q(age__range=(int(user_info.age) - 2, int(user_info.age) + 2)),  # 나이차 2살 허용
+        Q(job=user_info.job) | Q(hobby__icontains=user_info.hobby)  # 직업 또는 취미가 하나라도 겹치면 매칭
+    )
+
+    matching_teams = Info.objects.filter(
+        Q(peoplenum=user_info.peoplenum),  # 인원 수가 동일한 경우
+        Q(avgage__range=(int(user_info.avgage) - 5, int(user_info.avgage) + 5)),  # 평균 나이대 5살 차이 허용
+        Q(jobs__icontains=user_info.jobs),  # 직업이 하나라도 일치하는지 확인
+        Q(ages__icontains=user_info.ages)   # 나이대가 하나라도 일치하는지 확인
+    )
+
+    all_matches = individual_matches | matching_teams
+
+    return all_matches.distinct()
