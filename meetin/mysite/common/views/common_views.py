@@ -408,6 +408,89 @@ def find_matches(user_info):
         Q(ages__icontains=user_info.ages)   # 나이대가 하나라도 일치하는지 확인
     )
 
-    all_matches = individual_matches | matching_teams
+    return matching_teams.distinct()
 
-    return all_matches.distinct()
+
+def find_matches(user_info):
+    # 자신의 성별에 따라 반대 성별을 찾도록 설정
+    opposite_sex = 'male' if user_info.sex == 'female' else 'female'
+
+    # peoplenum 필터링 (무조건 하나라도 일치해야 함)
+    peoplenum_filter = Q()
+    user_peoplenum_list = [int(num) for num in user_info.peoplenum.split(',')]  # peoplenum 리스트로 변환
+
+    for num in user_peoplenum_list:
+        peoplenum_filter |= Q(peoplenum__contains=str(num))
+
+    # 1. sex와 peoplenum이 일치하는 프로필 필터링
+    matching_profiles = Info.objects.filter(
+        peoplenum_filter,
+        sex=opposite_sex  # 반대 성별 필터 적용
+    )
+
+    # 2. age와 job 조건 필터링
+    ages_filter = Q()
+    for age_range in user_info.ages.split(','):
+        start_age, end_age = map(int, age_range.split('-'))
+        ages_filter |= Q(avgage__range=(start_age, end_age))
+
+    jobs = user_info.jobs.split(',')  # jobs도 리스트로 변환
+
+    # 첫 번째 우선순위: 나이와 직업이 모두 일치하는 상대
+    both_values_matches = matching_profiles.filter(
+        ages_filter,
+        job__in=jobs
+    )
+    print("Matches after both age and job filtering:", both_values_matches)
+
+    if both_values_matches.exists():
+        # 나이와 직업이 모두 일치하는 상대가 있으면 그 결과를 반환
+        return both_values_matches.distinct()
+    else:
+        # 두 번째 우선순위: 나이 또는 직업 중 하나만 일치하는 상대
+        either_values_matches = matching_profiles.filter(
+            ages_filter | Q(job__in=jobs)
+        )
+        print("Matches after either age or job filtering:", either_values_matches)
+
+        if either_values_matches.exists():
+            # 나이 또는 직업 중 하나만 일치하는 상대가 있으면 그 결과를 반환
+            return either_values_matches.distinct()
+
+    # 매칭되는 결과가 없을 경우 빈 쿼리셋 반환
+    return Info.objects.none()
+
+def save_first_match(user_info):
+    matches = find_matches(user_info)
+
+    if matches.exists():
+        # 첫 번째 매칭 상대 가져오기
+        first_match = matches.first()
+
+        # 남성, 여성에 따라 저장할 대상 설정
+        if user_info.sex == 'male':
+            matched_man = user_info
+            matched_woman = first_match
+        else:
+            matched_man = first_match
+            matched_woman = user_info
+
+        # matchingInfo에 매칭 정보 저장
+        matching = matchingInfo.objects.create(
+            matchingnum=generate_matching_number(),  # matchingnum은 고유번호 생성 함수
+            matched_man=matched_man,
+            matched_woman=matched_woman
+        )
+        matching.save()
+
+        return matching
+
+    else:
+        # 매칭 상대가 없을 경우 None 반환
+        return None
+
+
+def generate_matching_number():
+    import random
+    import string
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
