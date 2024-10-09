@@ -186,7 +186,7 @@ def mbti(request):
 def myinfo(request):
     access_token = request.session.get("access_token", None)
     if access_token == None:  # 로그인 안돼있으면
-        return render(request, "myapp/kakaologin.html")  # 로그인 시키기
+        return render(request, "kakaologin.html")  # 로그인 시키기
 
     account_info = requests.get("https://kapi.kakao.com/v2/user/me",
                                 headers={"Authorization": f"Bearer {access_token}"}).json()
