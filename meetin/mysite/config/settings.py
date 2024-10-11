@@ -54,7 +54,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:3000/','ec2-3-140-252-135.us-east-2.compute.amazonaws.com:8080','http://localhost:8000/']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000/','http://ec2-3-140-252-135.us-east-2.compute.amazonaws.com:8080','http://localhost:8000/']
 
 ROOT_URLCONF = 'config.urls'
 
