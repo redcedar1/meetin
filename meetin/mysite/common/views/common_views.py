@@ -58,7 +58,7 @@ def kakaologin(request):
 
 
 def kakaoLoginLogic(request):
-    _restApiKey = '677368ff9f3d010c3e9e571297ff5558'  # 입력필요
+    _restApiKey = 'd37e3286aa4a1b7e3a2c084309f70d72'  # 입력필요
     _redirectUrl = 'http://ec2-3-38-168-209.ap-northeast-2.compute.amazonaws.com:8080/kakaoLoginLogicRedirect'
     _url = f'https://kauth.kakao.com/oauth/authorize?client_id={_restApiKey}&redirect_uri={_redirectUrl}&response_type=code'
     return redirect(_url)
@@ -66,7 +66,7 @@ def kakaoLoginLogic(request):
 
 def kakaoLoginLogicRedirect(request):
     _qs = request.GET['code']
-    _restApiKey = '677368ff9f3d010c3e9e571297ff5558'  # 입력필요
+    _restApiKey = 'd37e3286aa4a1b7e3a2c084309f70d72'  # 입력필요
     _redirect_uri = 'http://ec2-3-38-168-209.ap-northeast-2.compute.amazonaws.com:8080/kakaoLoginLogicRedirect'
     _url = f'https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={_restApiKey}&redirect_uri={_redirect_uri}&code={_qs}'
     _res = requests.post(_url)
