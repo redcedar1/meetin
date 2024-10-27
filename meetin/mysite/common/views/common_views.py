@@ -18,72 +18,85 @@ def index(request):
 @csrf_exempt
 def home(request):
     logged = 0
-
     access_token = request.session.get("access_token", None)
+
     if access_token:
         logged = 1
-        account_info = requests.get("https://kapi.kakao.com/v2/user/me",
-                                    headers={"Authorization": f"Bearer {access_token}"}).json()
+        account_info = requests.get(
+            "https://kapi.kakao.com/v2/user/me",
+            headers={"Authorization": f"Bearer {access_token}"}
+        ).json()
+
         kakao_id = account_info.get("id")
         user_info = Info.objects.filter(kakao_id=kakao_id).first()
+
     context = {'logged': logged}
     return render(request, "home.html", context)
 
+
 @csrf_exempt
 def menu(request):
-
-    return render(request,"menu.html")
+    return render(request, "menu.html")
 
 
 def kakaologin(request):
     access_token = request.session.get("access_token", None)
 
-    if access_token:  # 세션에 access_token이 있는 경우
-        # 사용자 정보 요청
-        account_info = requests.get("https://kapi.kakao.com/v2/user/me",
-                                    headers={"Authorization": f"Bearer {access_token}"}).json()
+    if access_token:
+        account_info = requests.get(
+            "https://kapi.kakao.com/v2/user/me",
+            headers={"Authorization": f"Bearer {access_token}"}
+        ).json()
 
-        # 카카오 API에서 사용자 ID 가져오기
         kakao_id = account_info.get("id")
 
         if kakao_id:
-            # 새로운 레코드 생성 또는 조회
             user_profile, created = Info.objects.get_or_create(kakao_id=kakao_id)
             if created:
                 print(f"새로운 Info 레코드 생성: {user_profile}")
             else:
                 print(f"기존 Info 레코드 조회: {user_profile}")
 
-            # 세션에 사용자 프로필 저장
             request.session["user_profile"] = kakao_id
-
-            return redirect("/home")  # 로그인 성공 시 home 페이지로 리디렉트
+            return redirect("/home")
         else:
             print("카카오 사용자 ID를 가져오는 데 실패했습니다.")
             return redirect("/kakaologin/")
 
-    # 로그인되지 않은 경우 로그인 페이지로 이동
     return render(request, "kakaologin.html")
 
 
 def kakaoLoginLogic(request):
-    _restApiKey = 'd37e3286aa4a1b7e3a2c084309f70d72'  # 입력필요
-    _redirectUrl = 'http://ec2-3-38-168-209.ap-northeast-2.compute.amazonaws.com:8080/kakaoLoginLogicRedirect'
+    _restApiKey = 'd37e3286aa4a1b7e3a2c084309f70d72'
+    _redirectUrl = 'http://127.0.0.1:8000/kakaoLoginLogicRedirect'
     _url = f'https://kauth.kakao.com/oauth/authorize?client_id={_restApiKey}&redirect_uri={_redirectUrl}&response_type=code'
     return redirect(_url)
 
 
 def kakaoLoginLogicRedirect(request):
-    _qs = request.GET['code']
-    _restApiKey = 'd37e3286aa4a1b7e3a2c084309f70d72'  # 입력필요
-    _redirect_uri = 'http://ec2-3-38-168-209.ap-northeast-2.compute.amazonaws.com:8080/kakaoLoginLogicRedirect'
-    _url = f'https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={_restApiKey}&redirect_uri={_redirect_uri}&code={_qs}'
-    _res = requests.post(_url)
-    _result = _res.json()
-    request.session['access_token'] = _result['access_token']
-    request.session.modified = True
+    code = request.GET.get('code')
+    _restApiKey = 'd37e3286aa4a1b7e3a2c084309f70d72'
+    _redirectUri = 'http://127.0.0.1:8000/kakaoLoginLogicRedirect'
+    token_url = "https://kauth.kakao.com/oauth/token"
 
-    return redirect("/home")  # 로그인 완료 후엔 home페이지로
+    response = requests.post(
+        token_url,
+        data={
+            "grant_type": "authorization_code",
+            "client_id": _restApiKey,
+            "redirect_uri": _redirectUri,
+            "code": code,
+        },
+    )
+
+    access_token = response.json().get("access_token")
+    if access_token:
+        request.session["access_token"] = access_token
+        print("Access token 저장 성공:", access_token)
+        return redirect("/kakaologin")
+    else:
+        print("Access token 발급 실패:", response.json())
+        return redirect("/kakaologin/")
 
 
 def kakaoLogout(request):
@@ -515,3 +528,27 @@ def generate_matching_number():
     import random
     import string
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+
+def find_and_render_match(request):
+    # 현재 로그인된 사용자 정보를 가져옴
+    user_info = Info.objects.get(kakao_id=request.session.get("user_profile"))
+
+    # 첫 번째 매칭 결과를 찾음
+    match = save_first_match(user_info)
+
+    peoplenum_range = [2, 5, 8, 11]  # 템플릿에 전달할 range 값
+
+    # 매칭된 상대가 있으면 결과를 렌더링
+    if match:
+        context = {
+            'matched_man': match.matched_man,
+            'matched_woman': match.matched_woman,
+            'peoplenum_range': peoplenum_range,
+        }
+    else:
+        context = {
+            'error': '매칭된 상대가 없습니다.'
+        }
+
+    # result.html로 데이터 전달
+    return render(request, 'result.html', context)
