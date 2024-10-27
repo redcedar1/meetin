@@ -128,10 +128,16 @@ def hobby(request):
 
 @csrf_exempt
 def meeting(request):
+    access_token = request.session.get("access_token", None)
+    if access_token:
+        logged = 1
+        account_info = requests.get("https://kapi.kakao.com/v2/user/me",
+                                    headers={"Authorization": f"Bearer {access_token}"}).json()
+        kakao_id = account_info.get("id")
     if request.method == "POST":
         try:
             # kakao_id=0인 하나의 Info 객체를 가져옴
-            user_info = Info.objects.get(kakao_id=0)
+            user_info = Info.objects.get(kakao_id=kakao_id)
         except Info.DoesNotExist:
             return render(request, "error.html", {"message": "User not found"})
 
@@ -151,10 +157,16 @@ def meeting(request):
 
 @csrf_exempt
 def meeting2(request):
+    access_token = request.session.get("access_token", None)
+    if access_token:
+        logged = 1
+        account_info = requests.get("https://kapi.kakao.com/v2/user/me",
+                                    headers={"Authorization": f"Bearer {access_token}"}).json()
+        kakao_id = account_info.get("id")
     if request.method == "POST":
         try:
             # kakao_id=0인 하나의 Info 객체를 가져옴
-            user_info = Info.objects.get(kakao_id=0)
+            user_info = Info.objects.get(kakao_id=kakao_id)
         except Info.DoesNotExist:
             return render(request, "error.html", {"message": "User not found"})
 
@@ -192,7 +204,7 @@ def myinfo(request):
                                 headers={"Authorization": f"Bearer {access_token}"}).json()
     kakao_id = account_info.get("id")
 
-    user_profile = Info.objects.get(kakao_id=0)  # user_info로 바꿀까?
+    user_profile = Info.objects.get(kakao_id=kakao_id)  # user_info로 바꿀까?
     context = {'user_profile': user_profile,  # 사용자 정보를 context에 추가
                }
     return render(request, "myinfo.html", context)
@@ -280,7 +292,7 @@ def my(request, id):
         index2 = index + 1
         if index2 > 12:  # 모든 정보를 입력한 경우
             # 세션에 저장된 정보를 하나의 Info 객체에 저장하고 세션 초기화
-            user_info = Info.objects.get(kakao_id=0)
+            user_info = Info.objects.get(kakao_id=kakao_id)
             if user_info:
                 user_info.age = request.session.get('age')
                 user_info.sex = request.session.get('sex')
@@ -356,7 +368,7 @@ def kakaoid(request):
         kakao_id = account_info.get("id")
 
         # kakao_id를 사용하여 해당 사용자의 레코드 가져오기
-        user_info = Info.objects.get(kakao_id=0)
+        user_info = Info.objects.get(kakao_id=kakao_id)
 
         kakaotalk_id = request.POST.get("kakaoid")
         if kakaotalk_id is not None:
