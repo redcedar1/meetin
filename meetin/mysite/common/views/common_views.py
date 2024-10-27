@@ -491,6 +491,11 @@ def find_matches(user_info):
             # 나이 또는 직업 중 하나만 일치하는 상대가 있으면 그 결과를 반환
             return either_values_matches.distinct()
 
+        # 매칭되는 결과가 없을 경우 모든 프로필 중에서 성별만 반대인 첫 번째 프로필 반환
+        fallback_match = Info.objects.filter(sex=opposite_sex).first()
+        if fallback_match:
+            return [fallback_match]  # 단일 객체를 리스트로 반환
+
     # 매칭되는 결과가 없을 경우 빈 쿼리셋 반환
     return Info.objects.none()
 
@@ -501,19 +506,10 @@ def save_first_match(user_info):
         # 첫 번째 매칭 상대 가져오기
         first_match = matches.first()
 
-        # 남성, 여성에 따라 저장할 대상 설정
-        if user_info.sex == 'male':
-            matched_man = user_info
-            matched_woman = first_match
-        else:
-            matched_man = first_match
-            matched_woman = user_info
-
         # matchingInfo에 매칭 정보 저장
         matching = matchingInfo.objects.create(
             matchingnum=generate_matching_number(),  # matchingnum은 고유번호 생성 함수
-            matched_man=matched_man,
-            matched_woman=matched_woman
+            matched=first_match  # 성별에 관계없이 matched 컬럼에 저장
         )
         matching.save()
 

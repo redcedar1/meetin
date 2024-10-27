@@ -132,9 +132,7 @@ class matchingInfo(models.Model):
     matchingnum = models.CharField(max_length=10, primary_key=True)
 
     #매칭된 남성
-    matched_man = models.ForeignKey('menInfo', on_delete=models.SET_NULL, null=True, blank=True, db_column='matched_man')
-    #매칭된 여성
-    matched_woman = models.ForeignKey('womenInfo', on_delete=models.SET_NULL, null=True, blank=True, db_column='matched_woman')
+    matched = models.ForeignKey('Info', on_delete=models.SET_NULL, null=True, blank=True, db_column='matched')
 
     def __str__(self):
         return str(self.pk)
