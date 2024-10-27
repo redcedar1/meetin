@@ -36,25 +36,19 @@ def menu(request):
 
 
 def kakaologin(request):
-    # context = {'check':False} 지운다?
     access_token = request.session.get("access_token", None)
-    if access_token:  # 만약 세션에 access_token이 있으면(==로그인 되어 있으면)
+
+    if access_token:  # 로그인 상태
         account_info = requests.get("https://kapi.kakao.com/v2/user/me",
                                     headers={"Authorization": f"Bearer {access_token}"}).json()
         kakao_id = account_info.get("id")
-        try:  # 어차피 access_token이 있어야 하니까 예외 처리는 없어도 될 듯
-            user_profile = Info.objects.get(kakao_id=kakao_id)  # 카카오톡 ID를 사용하여 사용자 정보 조회
-            # print(kakao_id) 지운다?
-            # context['user_profile'] = user_profile 지운다?
-        except Info.DoesNotExist:
-            # 새로운 레코드 생성
-            user_profile = Info(kakao_id=kakao_id)
-            user_profile.save()
-            # context['user_profile'] = user_profile 지운다?
 
-        return redirect("/home")  # 로그인 되어있으면 home페이지로 #로그인 되어있으면 home페이지로
+        # 카카오 ID로 사용자 정보 조회, 없으면 생성
+        user_profile, created = Info.objects.get_or_create(kakao_id=kakao_id)
 
-    return render(request, "kakaologin.html")  # 로그인 안되어있으면 로그인페이지로
+        return redirect("/home")  # 로그인 상태라면 home 페이지로 리디렉션
+
+    return render(request, "kakaologin.html")  # 비로그인 상태라면 로그인 페이지로 이동
 
 
 def kakaoLoginLogic(request):
