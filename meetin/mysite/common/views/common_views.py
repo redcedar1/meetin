@@ -38,17 +38,32 @@ def menu(request):
 def kakaologin(request):
     access_token = request.session.get("access_token", None)
 
-    if access_token:  # 로그인 상태
+    if access_token:  # 세션에 access_token이 있는 경우
+        # 사용자 정보 요청
         account_info = requests.get("https://kapi.kakao.com/v2/user/me",
                                     headers={"Authorization": f"Bearer {access_token}"}).json()
+
+        # 카카오 API에서 사용자 ID 가져오기
         kakao_id = account_info.get("id")
 
-        # 카카오 ID로 사용자 정보 조회, 없으면 생성
-        user_profile, created = Info.objects.get_or_create(kakao_id=kakao_id)
+        if kakao_id:
+            # 새로운 레코드 생성 또는 조회
+            user_profile, created = Info.objects.get_or_create(kakao_id=kakao_id)
+            if created:
+                print(f"새로운 Info 레코드 생성: {user_profile}")
+            else:
+                print(f"기존 Info 레코드 조회: {user_profile}")
 
-        return redirect("/home")  # 로그인 상태라면 home 페이지로 리디렉션
+            # 세션에 사용자 프로필 저장
+            request.session["user_profile"] = kakao_id
 
-    return render(request, "kakaologin.html")  # 비로그인 상태라면 로그인 페이지로 이동
+            return redirect("/home")  # 로그인 성공 시 home 페이지로 리디렉트
+        else:
+            print("카카오 사용자 ID를 가져오는 데 실패했습니다.")
+            return redirect("/kakaologin/")
+
+    # 로그인되지 않은 경우 로그인 페이지로 이동
+    return render(request, "kakaologin.html")
 
 
 def kakaoLoginLogic(request):
