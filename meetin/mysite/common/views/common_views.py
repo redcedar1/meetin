@@ -537,8 +537,7 @@ def find_and_render_match(request):
     # 매칭된 상대가 있으면 결과를 렌더링
     if match:
         context = {
-            'matched_man': match.matched_man,
-            'matched_woman': match.matched_woman,
+            'matched': match.matched,
             'peoplenum_range': peoplenum_range,
         }
     else:
