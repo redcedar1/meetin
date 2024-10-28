@@ -532,13 +532,12 @@ def find_and_render_match(request):
     # 첫 번째 매칭 결과를 찾음
     match = save_first_match(user_info)
 
-    peoplenum_range = [2, 5, 8, 11]  # 템플릿에 전달할 range 값
 
     # 매칭된 상대가 있으면 결과를 렌더링
     if match:
         context = {
             'matched': match.matched,
-            'peoplenum_range': peoplenum_range,
+            'peoplenum': user_info.peoplenum,
         }
     else:
         context = {
