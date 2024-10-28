@@ -394,6 +394,27 @@ def youinfo(request):
 
     return render(request, "youinfo.html", context)
 
+def kakao(request):
+    access_token = request.session.get("access_token", None)
+    if access_token == None:  # 로그인 안돼있으면
+        return render(request, "myapp/kakaologin.html")  # 로그인 시키기
+
+    account_info = requests.get("https://kapi.kakao.com/v2/user/me",
+                                headers={"Authorization": f"Bearer {access_token}"}).json()
+    kakao_id = account_info.get("id")
+
+    user_profile = Info.objects.get(kakao_id=kakao_id)  # user_info로 바꿀까?
+    matches = find_matches(user_profile)
+
+    if matches.exists():
+        # 첫 번째 매칭 상대 가져오기
+        first_match = matches.first()
+        context = {'matched_profile': first_match,  # 사용자 정보를 context에 추가
+                   }
+
+    return render(request, "kakao.html", context)
+
+
 @csrf_exempt
 def kakaoid(request):
     access_token = request.session.get("access_token",None)

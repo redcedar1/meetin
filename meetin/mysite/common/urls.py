@@ -25,6 +25,7 @@ urlpatterns = [
     path('myinfo/',common_views.myinfo,name='myinfo'),
     path('success/',common_views.success,name='success'),
     path('youinfo/',common_views.youinfo,name='youinfo'),
+    path('kakao/',common_views.kakao,name='kakao'),
     path('kakaoid/',common_views.kakaoid,name='kakaoid'),
     path('kakaoLoginLogic/', common_views.kakaoLoginLogic),
     path('kakaoLoginLogicRedirect/', common_views.kakaoLoginLogicRedirect),
