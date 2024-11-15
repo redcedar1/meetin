@@ -26,31 +26,40 @@ def update_location(request):
 # 일정 거리 내 사용자 조회 API
 def nearby_users(request):
     access_token = request.session.get("access_token", None)
-    if access_token == None:  # 로그인 안돼있으면
+    if access_token is None:  # 로그인 안돼있으면
         return render(request, "kakaologin.html")  # 로그인 시키기
 
-    account_info = requests.get("https://kapi.kakao.com/v2/user/me",
-                                headers={"Authorization": f"Bearer {access_token}"}).json()
+    # 현재 로그인된 사용자 정보 가져오기
+    account_info = requests.get(
+        "https://kapi.kakao.com/v2/user/me",
+        headers={"Authorization": f"Bearer {access_token}"}
+    ).json()
     kakao_id = account_info.get("id")
-    # 현재 로그인된 사용자 정보를 가져옴
-    user_info = Info.objects.get(kakao_id=kakao_id)
+    try:
+        user_info = Info.objects.get(kakao_id=kakao_id)
+    except Info.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+
     # latitude와 longitude 값 가져오기
-    latitude = float(request.GET.get('latitude', None))
-    longitude = float(request.GET.get('longitude', None))
+    latitude = request.GET.get('latitude')
+    longitude = request.GET.get('longitude')
     distance = float(request.GET.get('distance', 100))  # 기본 반경은 100km
 
     # 유효성 검사: latitude와 longitude가 없으면 오류 반환
     if latitude is None or longitude is None:
         return JsonResponse({'error': 'Missing latitude or longitude'}, status=400)
 
-    # 사용자 위치를 업데이트: 이미 존재하는 Location이 있으면 업데이트하고, 없으면 새로 생성
-    location, created = Location.objects.get_or_create(user=user_info)
+    try:
+        latitude = float(latitude)
+        longitude = float(longitude)
+    except ValueError:
+        return JsonResponse({'error': 'Invalid latitude or longitude values'}, status=400)
 
-    # 위치 값이 None이 아니면 업데이트
-    if latitude is not None and longitude is not None:
-        location.latitude = latitude
-        location.longitude = longitude
-        location.save()
+    # 사용자 위치 정보 업데이트 또는 생성
+    location, created = Location.objects.update_or_create(
+        user=user_info,  # 조건: 현재 사용자의 위치
+        defaults={'latitude': latitude, 'longitude': longitude}  # 값 업데이트
+    )
 
     current_location = (latitude, longitude)
     nearby_users = []
