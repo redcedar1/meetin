@@ -563,8 +563,18 @@ def generate_matching_number():
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
 
 def find_and_render_match(request):
+    access_token = request.session.get("access_token", None)
+    if access_token == None:  # 로그인 안돼있으면
+        return render(request, "kakaologin.html")  # 로그인 시키기
+
+    account_info = requests.get("https://kapi.kakao.com/v2/user/me",
+                                headers={"Authorization": f"Bearer {access_token}"}).json()
+    kakao_id = account_info.get("id")
     # 현재 로그인된 사용자 정보를 가져옴
     user_info = Info.objects.get(kakao_id=request.session.get("user_profile"))
+
+    if not user_info.sex:  # `sex` 필드가 비어있거나 None인지 확인
+        return redirect("/my/1")
 
     # 첫 번째 매칭 결과를 찾음
     match = save_first_match(user_info)
