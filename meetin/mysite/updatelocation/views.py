@@ -82,7 +82,7 @@ def nearby_users(request):
                 'hobby': location.user.hobby,
                 'latitude': location.latitude,
                 'longitude': location.longitude,
-                'timestamp': location.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+                'timestamp': location.timestamp.strftime('%Y-%m-%d %H:%M'),
                 'distance': round(calculated_distance, 2)  # 사용자와의 거리 추가
             })
 
