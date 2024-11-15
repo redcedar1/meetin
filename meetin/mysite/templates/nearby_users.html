@@ -65,6 +65,7 @@
                         var infowindow = new kakao.maps.InfoWindow({
                             content: content
                         });
+                        infowindow.open(map, marker);
                     });
 
                     // 근처에 사용자가 있으면 알림 표시
