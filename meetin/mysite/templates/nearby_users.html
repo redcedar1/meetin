@@ -65,7 +65,24 @@
                         var infowindow = new kakao.maps.InfoWindow({
                             content: content
                         });
-                        infowindow.open(map, marker);
+                        // PC: 마우스를 올리면 정보창 열기
+                kakao.maps.event.addListener(marker, 'mouseover', function() {
+                    infowindow.open(map, marker);
+                });
+
+                // PC: 마우스를 벗어나면 정보창 닫기
+                kakao.maps.event.addListener(marker, 'mouseout', function() {
+                    infowindow.close();
+                });
+
+                // 모바일: 마커를 클릭하면 정보창 열기/닫기
+                kakao.maps.event.addListener(marker, 'click', function() {
+                    if (infowindow.getMap()) {
+                        infowindow.close();  // 이미 열려 있으면 닫기
+                    } else {
+                        infowindow.open(map, marker);  // 닫혀 있으면 열기
+                    }
+                });
                     });
 
                     // 근처에 사용자가 있으면 알림 표시
