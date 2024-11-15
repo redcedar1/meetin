@@ -2,9 +2,9 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-from common.models import Location
+from common.models import Location, Info
 from geopy.distance import geodesic
-import json
+import json, requests
 
 # 사용자의 현재 위치를 서버에 업데이트하는 API
 @csrf_exempt
@@ -25,6 +25,15 @@ def update_location(request):
 
 # 일정 거리 내 사용자 조회 API
 def nearby_users(request):
+    access_token = request.session.get("access_token", None)
+    if access_token == None:  # 로그인 안돼있으면
+        return render(request, "kakaologin.html")  # 로그인 시키기
+
+    account_info = requests.get("https://kapi.kakao.com/v2/user/me",
+                                headers={"Authorization": f"Bearer {access_token}"}).json()
+    kakao_id = account_info.get("id")
+    # 현재 로그인된 사용자 정보를 가져옴
+    user_info = Info.objects.get(kakao_id=kakao_id)
     # latitude와 longitude 값 가져오기
     latitude = float(request.GET.get('latitude', None))
     longitude = float(request.GET.get('longitude', None))
@@ -33,6 +42,9 @@ def nearby_users(request):
     # 유효성 검사: latitude와 longitude가 없으면 오류 반환
     if latitude is None or longitude is None:
         return JsonResponse({'error': 'Missing latitude or longitude'}, status=400)
+
+    location = Location(user=user_info, latitude=latitude, longitude=longitude)
+    location.save()
 
     current_location = (latitude, longitude)
     nearby_users = []
