@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:3000/','http://ec2-3-38-168-209.ap-northeast-2.compute.amazonaws.com:8080','http://localhost:8000/']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000/','https://catch-me-app.com', 'https://www.catch-me-app.com', 'http://ec2-3-38-168-209.ap-northeast-2.compute.amazonaws.com:8080','http://localhost:8000/']
 
 ROOT_URLCONF = 'config.urls'
 
