@@ -39,13 +39,31 @@ def nearby_users(request):
     longitude = float(request.GET.get('longitude', None))
     distance = float(request.GET.get('distance', 100))  # 기본 반경은 100km
 
+    # 유효성 검사: latitude와 longitude가 없으면 오류 반환
+    if latitude is None or longitude is None:
+        return JsonResponse({'error': 'Missing latitude or longitude'}, status=400)
+
+    try:
+        latitude = float(latitude)
+        longitude = float(longitude)
+    except ValueError:
+        return JsonResponse({'error': 'Invalid latitude or longitude values'}, status=400)
+
+    # 현재 사용자의 latitude와 longitude를 데이터베이스에 저장
+    user_kakao_id = request.user.kakao_id  # 로그인한 사용자의 kakao_id 사용 (필요시 로그인 시스템에 맞게 수정)
+    try:
+        user_info = Info.objects.get(kakao_id=user_kakao_id)  # 사용자의 정보 가져오기
+    except Info.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+
     # 사용자 위치를 업데이트: 이미 존재하는 Location이 있으면 업데이트하고, 없으면 새로 생성
     location, created = Location.objects.get_or_create(user=user_info)
 
-    # 위치 업데이트 (기존 레코드가 있을 경우)
-    location.latitude = latitude
-    location.longitude = longitude
-    location.save()
+    # 위치 값이 None이 아니면 업데이트
+    if latitude is not None and longitude is not None:
+        location.latitude = latitude
+        location.longitude = longitude
+        location.save()
 
     current_location = (latitude, longitude)
     nearby_users = []
