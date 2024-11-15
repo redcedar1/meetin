@@ -7,7 +7,7 @@
                     grid-row-gap: 70px;
                 }
                 .box1 {
-                    grid-column: 1/5;
+                    grid-column: 1/10;
                     grid-row: 1/2;
                     display: inline-block;
                     background-color: white;
