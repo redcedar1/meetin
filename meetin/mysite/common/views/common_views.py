@@ -68,7 +68,7 @@ def kakaologin(request):
 
 def kakaoLoginLogic(request):
     _restApiKey = 'd37e3286aa4a1b7e3a2c084309f70d72'
-    _redirectUrl = 'http://127.0.0.1:8000/kakaoLoginLogicRedirect'
+    _redirectUrl = 'https://catch-me-app.com/kakaoLoginLogicRedirect'
     _url = f'https://kauth.kakao.com/oauth/authorize?client_id={_restApiKey}&redirect_uri={_redirectUrl}&response_type=code'
     return redirect(_url)
 
@@ -76,7 +76,7 @@ def kakaoLoginLogic(request):
 def kakaoLoginLogicRedirect(request):
     code = request.GET.get('code')
     _restApiKey = 'd37e3286aa4a1b7e3a2c084309f70d72'
-    _redirectUri = 'http://127.0.0.1:8000/kakaoLoginLogicRedirect'
+    _redirectUri = 'https://catch-me-app.com/kakaoLoginLogicRedirect'
     token_url = "https://kauth.kakao.com/oauth/token"
 
     response = requests.post(
