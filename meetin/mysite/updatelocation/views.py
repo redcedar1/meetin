@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from common.models import Location, Info
@@ -38,7 +38,7 @@ def nearby_users(request):
     try:
         user_info = Info.objects.get(kakao_id=kakao_id)
     except Info.DoesNotExist:
-        return JsonResponse({'error': 'User not found'}, status=404)
+        return render(request, "kakaologin.html")
 
     # latitude와 longitude 값 가져오기
     latitude = request.GET.get('latitude')
@@ -92,4 +92,20 @@ def update_location_view(request):
     return render(request, 'update_location.html')
 
 def nearby_users_view(request):
+    access_token = request.session.get("access_token", None)
+    if access_token is None:  # 로그인 안돼있으면
+        return render(request, "kakaologin.html")  # 로그인 시키기
+
+    # 현재 로그인된 사용자 정보 가져오기
+    account_info = requests.get(
+        "https://kapi.kakao.com/v2/user/me",
+        headers={"Authorization": f"Bearer {access_token}"}
+    ).json()
+    kakao_id = account_info.get("id")
+    try:
+        user_info = Info.objects.get(kakao_id=kakao_id)
+    except Info.DoesNotExist:
+        return render(request, "kakaologin.html")
+    if not user_info.sex:  # `sex` 필드가 비어있거나 None인지 확인
+        return redirect("/my/1")
     return render(request, 'nearby_users.html')
