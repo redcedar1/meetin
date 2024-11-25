@@ -227,6 +227,10 @@ def myinfo(request):
     kakao_id = account_info.get("id")
 
     user_profile = Info.objects.get(kakao_id=kakao_id)  # user_info로 바꿀까?
+
+    if not user_profile.sex:  # `sex` 필드가 비어있거나 None인지 확인
+        return redirect("/my/1")
+
     context = {'user_profile': user_profile,  # 사용자 정보를 context에 추가
                }
     return render(request, "myinfo.html", context)
@@ -384,6 +388,10 @@ def youinfo(request):
     kakao_id = account_info.get("id")
 
     user_profile = Info.objects.get(kakao_id=kakao_id)  # user_info로 바꿀까?
+
+    if not user_profile.sex:  # `sex` 필드가 비어있거나 None인지 확인
+        return redirect("/my/1")
+
     matches = find_matches(user_profile)
 
     if matches.exists():
