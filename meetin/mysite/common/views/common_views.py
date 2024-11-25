@@ -226,9 +226,10 @@ def myinfo(request):
                                 headers={"Authorization": f"Bearer {access_token}"}).json()
     kakao_id = account_info.get("id")
 
-    user_profile = Info.objects.get(kakao_id=kakao_id)  # user_info로 바꿀까?
-
-    if not user_profile.sex:  # `sex` 필드가 비어있거나 None인지 확인
+    try:
+        user_profile = Info.objects.get(kakao_id=kakao_id)  # 사용자 정보 조회
+    except Info.DoesNotExist:
+        # 유저 프로필이 없을 경우 처리 (예: 사용자 등록 페이지로 리디렉션)
         return redirect("/my/1")
 
     context = {'user_profile': user_profile,  # 사용자 정보를 context에 추가
@@ -387,9 +388,10 @@ def youinfo(request):
                                 headers={"Authorization": f"Bearer {access_token}"}).json()
     kakao_id = account_info.get("id")
 
-    user_profile = Info.objects.get(kakao_id=kakao_id)  # user_info로 바꿀까?
-
-    if not user_profile.sex:  # `sex` 필드가 비어있거나 None인지 확인
+    try:
+        user_profile = Info.objects.get(kakao_id=kakao_id)  # 사용자 정보 조회
+    except Info.DoesNotExist:
+        # 유저 프로필이 없을 경우 처리 (예: 사용자 등록 페이지로 리디렉션)
         return redirect("/my/1")
 
     matches = find_matches(user_profile)
