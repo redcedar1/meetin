@@ -12,7 +12,7 @@ from ..models import Info, womenInfo, menInfo, matchingInfo
 
 @csrf_exempt
 def index(request):
-   return redirect("/home")
+    return redirect("/home")
 
 
 @csrf_exempt
@@ -108,45 +108,51 @@ def kakaoLogout(request):
         del request.session['access_token']
         return render(request, 'loginoutsuccess.html')
 
+
 @csrf_exempt
 def good(request):
-
     return render(request, "good.html")
+
 
 @csrf_exempt
 def go(request):
-
     return render(request, "go.html")
 
 
 @csrf_exempt
 def alonechoose(request):
-
     return render(request, "alonechoose.html")
+
+
 @csrf_exempt
 def alonechoose2(request):
-
     return render(request, "alonechoose2.html")
+
+
 @csrf_exempt
 def army(request):
-
     return render(request, "army.html")
+
+
 @csrf_exempt
 def body(request):
-
     return render(request, "body.html")
+
+
 @csrf_exempt
 def eyes(request):
-
     return render(request, "eyes.html")
+
+
 @csrf_exempt
 def height(request):
-
     return render(request, "height.html")
+
+
 @csrf_exempt
 def hobby(request):
-
     return render(request, "hobby.html")
+
 
 @csrf_exempt
 def meeting(request):
@@ -227,21 +233,26 @@ def myinfo(request):
     kakao_id = account_info.get("id")
 
     try:
-        user_profile = Info.objects.get(kakao_id=kakao_id)  # 사용자 정보 조회
+        user_info = Info.objects.get(kakao_id=kakao_id)  # 사용자 정보 조회
     except Info.DoesNotExist:
         # 유저 프로필이 없을 경우 처리 (예: 사용자 등록 페이지로 리디렉션)
         return render(request, "kakaologin.html")
 
-    context = {'user_profile': user_profile,  # 사용자 정보를 context에 추가
+    if not user_info.sex:
+        return redirect("/my/1")
+
+    context = {'user_profile': user_info,  # 사용자 정보를 context에 추가
                }
     return render(request, "myinfo.html", context)
+
 
 def is_valid_transition(current_page, requested_page):
     # 요청한 페이지가 현재 페이지에서의 올바른 다음 페이지인지 확인
     requested_page_int = int(requested_page)
-    if requested_page_int == current_page + 1 or current_page == requested_page_int :
+    if requested_page_int == current_page + 1 or current_page == requested_page_int:
         return True
     return False
+
 
 @csrf_exempt
 def my(request, id):
@@ -290,7 +301,7 @@ def my(request, id):
         elif index == 5:
             request.session['school'] = request.POST.get("school")
             request.session['major'] = request.POST.get("major")
-        elif index == 6:#html에서 id값이 다르면 디비에서 다른 레코드로 되어서 반복문으로 한 글자씩 받아서 추가
+        elif index == 6:  # html에서 id값이 다르면 디비에서 다른 레코드로 되어서 반복문으로 한 글자씩 받아서 추가
             selected_mbti = []
             for i in range(1, 5):
                 mbti_value = request.POST.get(f"mbti{i}")
@@ -335,7 +346,7 @@ def my(request, id):
                 user_info.hobby = request.session.get('hobby')
                 user_info.free = request.session.get('free')
                 user_info.save()
-            else:#이미 로그인 한 상태라 레코드 새로 생성하는 예외처리는 없어도 될 듯
+            else:  # 이미 로그인 한 상태라 레코드 새로 생성하는 예외처리는 없어도 될 듯
                 myinfo = Info.objects.create(
                     kakao_id=kakao_id,
                     age=request.session.get('age'),
@@ -359,24 +370,27 @@ def my(request, id):
     context = {'count': index}
     return render(request, "my.html", context)
 
+
 @csrf_exempt
 def you(request):
-
     return render(request, "you.html")
+
 
 @csrf_exempt
 def choose(request):
-    #홍대축제에서 만나기 누르면 choose에서는 무조건 meeting으로 redirect
+    # 홍대축제에서 만나기 누르면 choose에서는 무조건 meeting으로 redirect
     return render(request, "choose.html")
+
 
 @csrf_exempt
 def success(request):
-        return render(request, "success.html")
+    return render(request, "success.html")
+
 
 @csrf_exempt
 def fail(request):
-
     return render(request, "fail.html")
+
 
 @csrf_exempt
 def youinfo(request):
@@ -389,12 +403,15 @@ def youinfo(request):
     kakao_id = account_info.get("id")
 
     try:
-        user_profile = Info.objects.get(kakao_id=kakao_id)  # 사용자 정보 조회
+        user_info = Info.objects.get(kakao_id=kakao_id)  # 사용자 정보 조회
     except Info.DoesNotExist:
         # 유저 프로필이 없을 경우 처리 (예: 사용자 등록 페이지로 리디렉션)
         return render(request, "kakaologin.html")
 
-    matches = find_matches(user_profile)
+    if not user_info.sex:
+        return redirect("/my/1")
+
+    matches = find_matches(user_info)
 
     if matches.exists():
         # 첫 번째 매칭 상대 가져오기
@@ -403,6 +420,7 @@ def youinfo(request):
                    }
 
     return render(request, "youinfo.html", context)
+
 
 def kakao(request):
     access_token = request.session.get("access_token", None)
@@ -431,11 +449,12 @@ def kakao(request):
 
 @csrf_exempt
 def kakaoid(request):
-    access_token = request.session.get("access_token",None)
-    if access_token == None: #로그인 안돼있으면
+    access_token = request.session.get("access_token", None)
+    if access_token == None:  # 로그인 안돼있으면
         return redirect("/kakaologin")
 
-    account_info = requests.get("https://kapi.kakao.com/v2/user/me",headers={"Authorization": f"Bearer {access_token}"}).json()
+    account_info = requests.get("https://kapi.kakao.com/v2/user/me",
+                                headers={"Authorization": f"Bearer {access_token}"}).json()
 
     if request.method == "POST":
         kakao_id = account_info.get("id")
@@ -455,6 +474,7 @@ def kakaoid(request):
             return redirect("/go")
 
     return render(request, "kakaoid.html")
+
 
 def calculate_match_score(user, potential_match):
     score = 0
@@ -481,6 +501,7 @@ def calculate_match_score(user, potential_match):
 
     return score
 
+
 def find_matches(user_info):
     opposite_sex = 'male' if user_info.sex == 'female' else 'female'
 
@@ -494,7 +515,7 @@ def find_matches(user_info):
         Q(peoplenum=user_info.peoplenum),  # 인원 수가 동일한 경우
         Q(avgage__range=(int(user_info.avgage) - 5, int(user_info.avgage) + 5)),  # 평균 나이대 5살 차이 허용
         Q(jobs__icontains=user_info.jobs),  # 직업이 하나라도 일치하는지 확인
-        Q(ages__icontains=user_info.ages)   # 나이대가 하나라도 일치하는지 확인
+        Q(ages__icontains=user_info.ages)  # 나이대가 하나라도 일치하는지 확인
     )
 
     return matching_teams.distinct()
@@ -554,6 +575,7 @@ def find_matches(user_info):
     # 매칭되는 결과가 없을 경우 빈 쿼리셋 반환
     return Info.objects.none()
 
+
 def save_first_match(user_info):
     matches = find_matches(user_info)
 
@@ -580,6 +602,7 @@ def generate_matching_number():
     import string
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
 
+
 def find_and_render_match(request):
     access_token = request.session.get("access_token", None)
     if access_token == None:  # 로그인 안돼있으면
@@ -600,7 +623,6 @@ def find_and_render_match(request):
 
     # 첫 번째 매칭 결과를 찾음
     match = save_first_match(user_info)
-
 
     # 매칭된 상대가 있으면 결과를 렌더링
     if match:
