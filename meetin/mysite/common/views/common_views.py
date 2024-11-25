@@ -158,10 +158,10 @@ def meeting(request):
         kakao_id = account_info.get("id")
     if request.method == "POST":
         try:
-            # kakao_id=0인 하나의 Info 객체를 가져옴
-            user_info = Info.objects.get(kakao_id=kakao_id)
+            user_info = Info.objects.get(kakao_id=kakao_id)  # 사용자 정보 조회
         except Info.DoesNotExist:
-            return render(request, "error.html", {"message": "User not found"})
+            # 유저 프로필이 없을 경우 처리 (예: 사용자 등록 페이지로 리디렉션)
+            return redirect("/kakaologin")
 
         # 인원 선택 정보 추출
         peoplenum = request.POST.get('submit_peoplenum')  # 단일 값으로 가져옴
@@ -187,10 +187,10 @@ def meeting2(request):
         kakao_id = account_info.get("id")
     if request.method == "POST":
         try:
-            # kakao_id=0인 하나의 Info 객체를 가져옴
-            user_info = Info.objects.get(kakao_id=kakao_id)
+            user_info = Info.objects.get(kakao_id=kakao_id)  # 사용자 정보 조회
         except Info.DoesNotExist:
-            return render(request, "error.html", {"message": "User not found"})
+            # 유저 프로필이 없을 경우 처리 (예: 사용자 등록 페이지로 리디렉션)
+            return redirect("/kakaologin")
 
         # 'submit_job'과 'submit_age' 필드를 처리
         jobs = request.POST.getlist('submit_job')  # 복수 선택 가능 (리스트로 받음)
@@ -230,7 +230,7 @@ def myinfo(request):
         user_profile = Info.objects.get(kakao_id=kakao_id)  # 사용자 정보 조회
     except Info.DoesNotExist:
         # 유저 프로필이 없을 경우 처리 (예: 사용자 등록 페이지로 리디렉션)
-        return redirect("/my/1")
+        return redirect("/kakaologin")
 
     context = {'user_profile': user_profile,  # 사용자 정보를 context에 추가
                }
@@ -392,7 +392,7 @@ def youinfo(request):
         user_profile = Info.objects.get(kakao_id=kakao_id)  # 사용자 정보 조회
     except Info.DoesNotExist:
         # 유저 프로필이 없을 경우 처리 (예: 사용자 등록 페이지로 리디렉션)
-        return redirect("/my/1")
+        return redirect("/kakaologin")
 
     matches = find_matches(user_profile)
 
@@ -413,7 +413,11 @@ def kakao(request):
                                 headers={"Authorization": f"Bearer {access_token}"}).json()
     kakao_id = account_info.get("id")
 
-    user_profile = Info.objects.get(kakao_id=kakao_id)  # user_info로 바꿀까?
+    try:
+        user_profile = Info.objects.get(kakao_id=kakao_id)  # 사용자 정보 조회
+    except Info.DoesNotExist:
+        # 유저 프로필이 없을 경우 처리 (예: 사용자 등록 페이지로 리디렉션)
+        return redirect("/kakaologin")
     matches = find_matches(user_profile)
 
     if matches.exists():
@@ -437,7 +441,11 @@ def kakaoid(request):
         kakao_id = account_info.get("id")
 
         # kakao_id를 사용하여 해당 사용자의 레코드 가져오기
-        user_info = Info.objects.get(kakao_id=kakao_id)
+        try:
+            user_info = Info.objects.get(kakao_id=kakao_id)  # 사용자 정보 조회
+        except Info.DoesNotExist:
+            # 유저 프로필이 없을 경우 처리 (예: 사용자 등록 페이지로 리디렉션)
+            return redirect("/kakaologin")
 
         kakaotalk_id = request.POST.get("kakaoid")
         if kakaotalk_id is not None:
@@ -581,7 +589,11 @@ def find_and_render_match(request):
                                 headers={"Authorization": f"Bearer {access_token}"}).json()
     kakao_id = account_info.get("id")
     # 현재 로그인된 사용자 정보를 가져옴
-    user_info = Info.objects.get(kakao_id=request.session.get("user_profile"))
+    try:
+        user_info = Info.objects.get(kakao_id=kakao_id)  # 사용자 정보 조회
+    except Info.DoesNotExist:
+        # 유저 프로필이 없을 경우 처리 (예: 사용자 등록 페이지로 리디렉션)
+        return redirect("/kakaologin")
 
     if not user_info.sex:  # `sex` 필드가 비어있거나 None인지 확인
         return redirect("/my/1")
